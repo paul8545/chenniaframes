@@ -68,7 +68,7 @@ function Nav() {
             <span className="eyebrow">Index</span>
             <button onClick={() => setOpen(false)} className="eyebrow">Close ✕</button>
           </div>
-          <nav className="flex-1 flex flex-col items-center justify-center gap-6">
+          <nav className="flex-1 flex flex-col items-center justify-center gap-4 md:gap-6 px-6">
             {links.map((l, i) => (
               <motion.a
                 key={l}
@@ -76,13 +76,13 @@ function Nav() {
                 transition={{ delay: 0.08 * i, duration: 0.6 }}
                 href={`#${l.toLowerCase()}`}
                 onClick={() => setOpen(false)}
-                className="font-display text-6xl md:text-8xl hover:text-gold transition-colors italic"
+                className="font-display text-5xl sm:text-6xl md:text-8xl hover:text-gold transition-colors italic"
               >
                 {l}.
               </motion.a>
             ))}
           </nav>
-          <div className="px-10 pb-8 flex justify-between text-xs eyebrow">
+          <div className="px-6 md:px-10 pb-8 flex justify-between text-xs eyebrow">
             <span>Chennai · Tamil Nadu</span>
             <span>+91 98470 00000</span>
           </div>
@@ -102,8 +102,47 @@ const columns = [
 function ColumnHero() {
   const [active, setActive] = useState(0);
   return (
-    <section id="top" className="relative h-screen min-h-[700px] w-full overflow-hidden bg-background">
-      <div className="flex h-full w-full">
+    <section id="top" className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-background">
+      {/* Mobile: single slide with dot nav */}
+      <div className="md:hidden relative h-full w-full">
+        {columns.map((c, i) => (
+          <motion.div
+            key={i}
+            className={`absolute inset-0 ${active === i ? "z-10" : "z-0"}`}
+            initial={false}
+            animate={{ opacity: active === i ? 1 : 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <img src={c.src} alt={c.title} className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/40" />
+            <div className="relative h-full flex flex-col justify-end p-6 pb-20">
+              <div className="max-w-sm">
+                <p className="serif-italic text-ivory/80 text-sm leading-relaxed mb-4">
+                  {c.eyebrow}
+                </p>
+                <h2 className="font-display text-ivory text-4xl leading-[1] mb-2">
+                  {c.title}
+                </h2>
+                <p className="eyebrow !text-ivory/70">{c.sub}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+        {/* Dots */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {columns.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${active === i ? "w-8 bg-ivory" : "w-2 bg-ivory/40"}`}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: columns */}
+      <div className="hidden md:flex h-full w-full">
         {columns.map((c, i) => (
           <motion.div
             key={i}
@@ -170,7 +209,7 @@ function About() {
   const y = useTransform(scrollYProgress, [0, 1], ["20%", "-20%"]);
 
   return (
-    <section id="about" ref={ref} className="relative py-32 md:py-44 px-6 md:px-12 max-w-7xl mx-auto">
+    <section id="about" ref={ref} className="relative py-20 md:py-44 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="grid md:grid-cols-12 gap-12 md:gap-16 items-start">
         <motion.div
           initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={fadeUp}
@@ -178,20 +217,20 @@ function About() {
         >
           <span className="eyebrow">Studio — 01</span>
           <div className="hairline mt-4 w-24" />
-          <h2 className="mt-8 font-display text-5xl md:text-7xl leading-[0.95]">
+          <h2 className="mt-8 font-display text-4xl md:text-7xl leading-[0.95]">
             Quiet light,<br />
             <em className="serif-italic text-gold">loud</em> love.
           </h2>
-          <motion.div style={{ y }} className="mt-12 aspect-[3/4] overflow-hidden hidden md:block">
+          <div className="mt-8 md:mt-12 aspect-[3/4] overflow-hidden">
             <img src={g3} alt="" className="h-full w-full object-cover" />
-          </motion.div>
+          </div>
         </motion.div>
 
         <motion.div
           initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}
           className="md:col-span-7 space-y-10 md:pt-8"
         >
-          <p className="text-xl md:text-2xl font-display italic text-ivory/90 leading-snug">
+          <p className="text-lg md:text-2xl font-display italic text-ivory/90 leading-snug">
             Born in Chennai, shaped by temple mornings and coastal light. For a decade we've followed
             South Indian weddings — from the first turmeric paste to the last laugh at dawn.
           </p>
@@ -199,14 +238,14 @@ function About() {
             We are a small studio. Two photographers, one filmmaker, and a colourist who still develops
             film by hand. We take on twelve weddings each season so every story gets the patience it deserves.
           </p>
-          <div className="grid grid-cols-3 gap-6 pt-10 border-t border-border">
+          <div className="grid grid-cols-3 gap-4 md:gap-6 pt-10 border-t border-border">
             {[
               ["240+", "Weddings"],
               ["14", "Districts"],
               ["10 yrs", "Of practice"],
             ].map(([n, l]) => (
               <div key={l}>
-                <div className="font-display text-4xl md:text-5xl text-ivory">{n}</div>
+                <div className="font-display text-3xl md:text-5xl text-ivory">{n}</div>
                 <div className="eyebrow mt-3">{l}</div>
               </div>
             ))}
@@ -344,7 +383,7 @@ function Gallery() {
                     {c.names}
                   </div>
                   <div className="mt-2 eyebrow !text-ivory/70">{c.venue}</div>
-                  <div className="mt-4 flex items-center gap-2 text-ivory translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <div className="mt-4 flex items-center gap-2 text-ivory translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100 transition-all duration-500">
                     <span className="eyebrow !text-gold">Open folder</span>
                     <span className="text-gold">→</span>
                   </div>
@@ -442,7 +481,7 @@ function Packages() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative p-10 border flex flex-col group transition-colors ${
+            className={`relative p-6 md:p-10 border flex flex-col group transition-colors ${
               p.featured
                 ? "bg-ivory text-background border-ivory"
                 : "bg-card border-border hover:border-gold"
