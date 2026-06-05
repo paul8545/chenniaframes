@@ -68,7 +68,7 @@ function Nav() {
             <span className="eyebrow">Index</span>
             <button onClick={() => setOpen(false)} className="eyebrow">Close ✕</button>
           </div>
-          <nav className="flex-1 flex flex-col items-center justify-center gap-6">
+          <nav className="flex-1 flex flex-col items-center justify-center gap-4 md:gap-6 px-6">
             {links.map((l, i) => (
               <motion.a
                 key={l}
@@ -76,7 +76,7 @@ function Nav() {
                 transition={{ delay: 0.08 * i, duration: 0.6 }}
                 href={`#${l.toLowerCase()}`}
                 onClick={() => setOpen(false)}
-                className="font-display text-6xl md:text-8xl hover:text-gold transition-colors italic"
+                className="font-display text-5xl sm:text-6xl md:text-8xl hover:text-gold transition-colors italic"
               >
                 {l}.
               </motion.a>
