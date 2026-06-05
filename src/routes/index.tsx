@@ -102,8 +102,47 @@ const columns = [
 function ColumnHero() {
   const [active, setActive] = useState(0);
   return (
-    <section id="top" className="relative h-screen min-h-[700px] w-full overflow-hidden bg-background">
-      <div className="flex h-full w-full">
+    <section id="top" className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-background">
+      {/* Mobile: single slide with dot nav */}
+      <div className="md:hidden relative h-full w-full">
+        {columns.map((c, i) => (
+          <motion.div
+            key={i}
+            className={`absolute inset-0 ${active === i ? "z-10" : "z-0"}`}
+            initial={false}
+            animate={{ opacity: active === i ? 1 : 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <img src={c.src} alt={c.title} className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/40" />
+            <div className="relative h-full flex flex-col justify-end p-6 pb-20">
+              <div className="max-w-sm">
+                <p className="serif-italic text-ivory/80 text-sm leading-relaxed mb-4">
+                  {c.eyebrow}
+                </p>
+                <h2 className="font-display text-ivory text-4xl leading-[1] mb-2">
+                  {c.title}
+                </h2>
+                <p className="eyebrow !text-ivory/70">{c.sub}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+        {/* Dots */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {columns.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${active === i ? "w-8 bg-ivory" : "w-2 bg-ivory/40"}`}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: columns */}
+      <div className="hidden md:flex h-full w-full">
         {columns.map((c, i) => (
           <motion.div
             key={i}
