@@ -82,7 +82,7 @@ function Nav() {
               </motion.a>
             ))}
           </nav>
-          <div className="px-10 pb-8 flex justify-between text-xs eyebrow">
+          <div className="px-6 md:px-10 pb-8 flex justify-between text-xs eyebrow">
             <span>Chennai · Tamil Nadu</span>
             <span>+91 98470 00000</span>
           </div>
