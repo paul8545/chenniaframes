@@ -217,18 +217,73 @@ function About() {
   );
 }
 
-const galleryItems = [
-  { src: g1, type: "image", title: "The Garland", span: "md:col-span-5 md:row-span-2" },
-  { src: g2, type: "image", title: "Backwaters", span: "md:col-span-7" },
-  { src: g3, type: "image", title: "Jasmine", span: "md:col-span-4" },
-  { src: g4, type: "image", title: "The Fire", span: "md:col-span-3" },
-  { src: g5, type: "video", title: "Varkala — film", span: "md:col-span-7 md:row-span-2" },
-  { src: g6, type: "image", title: "Reception", span: "md:col-span-5" },
+type Couple = {
+  id: string;
+  names: string;
+  venue: string;
+  date: string;
+  cover: string;
+  images: { src: string; caption: string }[];
+};
+
+const couples: Couple[] = [
+  {
+    id: "anjali-rahul",
+    names: "Anjali & Rahul",
+    venue: "Fort Kochi",
+    date: "Feb 2026",
+    cover: g1,
+    images: [
+      { src: g1, caption: "The garland exchange" },
+      { src: g3, caption: "Jasmine in her hair" },
+      { src: g6, caption: "Reception, first dance" },
+      { src: g4, caption: "Around the fire" },
+    ],
+  },
+  {
+    id: "meera-arjun",
+    names: "Meera & Arjun",
+    venue: "Alleppey Backwaters",
+    date: "Nov 2025",
+    cover: g2,
+    images: [
+      { src: g2, caption: "Houseboat morning" },
+      { src: g5, caption: "Varkala cliffs" },
+      { src: g3, caption: "Quiet hands" },
+      { src: g1, caption: "The blessing" },
+    ],
+  },
+  {
+    id: "divya-karthik",
+    names: "Divya & Karthik",
+    venue: "Guruvayur Temple",
+    date: "May 2025",
+    cover: g4,
+    images: [
+      { src: g4, caption: "Sacred fire" },
+      { src: g1, caption: "Tying the thaali" },
+      { src: g6, caption: "Family portrait" },
+      { src: g3, caption: "After the rituals" },
+    ],
+  },
+  {
+    id: "lakshmi-vinay",
+    names: "Lakshmi & Vinay",
+    venue: "Varkala Beach",
+    date: "Jan 2025",
+    cover: g5,
+    images: [
+      { src: g5, caption: "Vows at sunset" },
+      { src: g2, caption: "Walking the shore" },
+      { src: g6, caption: "Reception lights" },
+      { src: g4, caption: "Last laugh of the night" },
+    ],
+  },
 ];
 
 function Gallery() {
-  const [filter, setFilter] = useState<"all" | "image" | "video">("all");
-  const items = galleryItems.filter((i) => filter === "all" || i.type === filter);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const active = couples.find((c) => c.id === activeId) ?? null;
 
   return (
     <section id="gallery" className="py-32 md:py-44 border-t border-border">
@@ -238,54 +293,106 @@ function Gallery() {
             <span className="eyebrow">Archive — 02</span>
             <div className="hairline mt-4 w-24" />
             <h2 className="mt-6 font-display text-5xl md:text-7xl leading-[1.02] text-balance max-w-2xl">
-              Frames from <em className="serif-italic text-gold">recent</em> stories.
+              {active ? (
+                <>Inside <em className="serif-italic text-gold">{active.names}</em>.</>
+              ) : (
+                <>Stories from <em className="serif-italic text-gold">our</em> couples.</>
+              )}
             </h2>
+            <p className="mt-4 text-muted-foreground max-w-lg">
+              {active
+                ? `${active.venue} · ${active.date}`
+                : "Each folder is a wedding. Open one to step inside the day."}
+            </p>
           </div>
-          <div className="flex gap-2">
-            {(["all", "image", "video"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-5 py-2.5 border transition-colors ${
-                  filter === f
-                    ? "bg-ivory text-background border-ivory"
-                    : "border-border hover:border-ivory"
-                }`}
-              >
-                <span className="eyebrow" style={filter === f ? { color: "var(--color-background)" } : undefined}>
-                  {f === "all" ? "All" : f === "image" ? "Photos" : "Films"}
-                </span>
-              </button>
-            ))}
-          </div>
+          {active && (
+            <button
+              onClick={() => setActiveId(null)}
+              className="px-5 py-2.5 border border-border hover:border-ivory transition-colors self-start"
+            >
+              <span className="eyebrow">← All couples</span>
+            </button>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 md:auto-rows-[220px] gap-3">
-          {items.map((item, i) => (
-            <motion.figure
-              key={item.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.8, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-              className={`relative overflow-hidden group ${item.span} h-[300px] md:h-auto bg-card`}
-            >
-              <img
-                src={item.src}
-                alt={item.title}
-                loading="lazy"
-                className="h-full w-full object-cover transition-all duration-[1400ms] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <figcaption className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                <span className="font-display italic text-ivory text-2xl">{item.title}</span>
-                {item.type === "video" && (
-                  <span className="eyebrow !text-ivory border border-ivory/60 px-2 py-1">Film</span>
-                )}
-              </figcaption>
-            </motion.figure>
-          ))}
-        </div>
+        {!active && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {couples.map((c, i) => (
+              <motion.button
+                key={c.id}
+                onClick={() => setActiveId(c.id)}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="group relative aspect-[3/4] overflow-hidden bg-card text-left"
+              >
+                <img
+                  src={c.cover}
+                  alt={c.names}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-all duration-[1400ms] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                  <span className="eyebrow !text-ivory/80 backdrop-blur-sm bg-background/30 px-2 py-1">
+                    Folder · {c.images.length}
+                  </span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="font-display italic text-ivory text-2xl md:text-3xl leading-tight">
+                    {c.names}
+                  </div>
+                  <div className="mt-2 eyebrow !text-ivory/70">{c.venue}</div>
+                  <div className="mt-4 flex items-center gap-2 text-ivory translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <span className="eyebrow !text-gold">Open folder</span>
+                    <span className="text-gold">→</span>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        )}
+
+        {active && (
+          <motion.div
+            key={active.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="grid grid-cols-1 md:grid-cols-12 md:auto-rows-[220px] gap-3"
+          >
+            {active.images.map((img, i) => {
+              const spans = [
+                "md:col-span-7 md:row-span-2",
+                "md:col-span-5",
+                "md:col-span-5",
+                "md:col-span-7 md:row-span-2",
+                "md:col-span-12",
+              ];
+              return (
+                <motion.figure
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  className={`relative overflow-hidden group ${spans[i % spans.length]} h-[300px] md:h-auto bg-card`}
+                >
+                  <img
+                    src={img.src}
+                    alt={img.caption}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-all duration-[1400ms] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <figcaption className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <span className="font-display italic text-ivory text-xl">{img.caption}</span>
+                  </figcaption>
+                </motion.figure>
+              );
+            })}
+          </motion.div>
+        )}
       </div>
     </section>
   );
