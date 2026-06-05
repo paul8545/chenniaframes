@@ -31,7 +31,6 @@
   --color-ring: var(--ring);
 
   --color-gold: var(--gold);
-  --color-emerald-deep: var(--emerald-deep);
   --color-ivory: var(--ivory);
   --color-clay: var(--clay);
 
@@ -41,68 +40,48 @@
 }
 
 :root {
-  --radius: 0.25rem;
+  --radius: 0;
 
-  /* Ivory cream base, deep emerald, gold accent */
-  --background: oklch(0.972 0.012 85);
-  --foreground: oklch(0.22 0.02 60);
-  --card: oklch(0.985 0.008 85);
-  --card-foreground: oklch(0.22 0.02 60);
-  --popover: oklch(0.985 0.008 85);
-  --popover-foreground: oklch(0.22 0.02 60);
-  --primary: oklch(0.32 0.06 155);
-  --primary-foreground: oklch(0.97 0.012 85);
-  --secondary: oklch(0.93 0.018 80);
-  --secondary-foreground: oklch(0.22 0.02 60);
-  --muted: oklch(0.93 0.015 80);
-  --muted-foreground: oklch(0.48 0.025 70);
-  --accent: oklch(0.72 0.12 75);
-  --accent-foreground: oklch(0.18 0.02 60);
+  /* Cinematic dark — inspired by editorial wedding studios */
+  --background: oklch(0.08 0.005 60);
+  --foreground: oklch(0.96 0.008 85);
+  --card: oklch(0.11 0.008 60);
+  --card-foreground: oklch(0.96 0.008 85);
+  --popover: oklch(0.11 0.008 60);
+  --popover-foreground: oklch(0.96 0.008 85);
+  --primary: oklch(0.96 0.008 85);
+  --primary-foreground: oklch(0.08 0.005 60);
+  --secondary: oklch(0.16 0.01 60);
+  --secondary-foreground: oklch(0.96 0.008 85);
+  --muted: oklch(0.18 0.01 60);
+  --muted-foreground: oklch(0.65 0.015 75);
+  --accent: oklch(0.78 0.13 78);
+  --accent-foreground: oklch(0.10 0.005 60);
   --destructive: oklch(0.55 0.20 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.86 0.018 80);
-  --input: oklch(0.88 0.018 80);
-  --ring: oklch(0.72 0.12 75);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.78 0.13 78);
 
-  --gold: oklch(0.74 0.13 78);
-  --emerald-deep: oklch(0.32 0.06 155);
-  --ivory: oklch(0.972 0.012 85);
-  --clay: oklch(0.55 0.10 45);
-}
-
-.dark {
-  --background: oklch(0.16 0.015 60);
-  --foreground: oklch(0.96 0.012 85);
-  --card: oklch(0.20 0.015 60);
-  --card-foreground: oklch(0.96 0.012 85);
-  --popover: oklch(0.20 0.015 60);
-  --popover-foreground: oklch(0.96 0.012 85);
-  --primary: oklch(0.74 0.13 78);
-  --primary-foreground: oklch(0.18 0.02 60);
-  --secondary: oklch(0.26 0.02 60);
-  --secondary-foreground: oklch(0.96 0.012 85);
-  --muted: oklch(0.26 0.02 60);
-  --muted-foreground: oklch(0.70 0.02 70);
-  --accent: oklch(0.74 0.13 78);
-  --accent-foreground: oklch(0.18 0.02 60);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.74 0.13 78);
+  --gold: oklch(0.80 0.13 78);
+  --ivory: oklch(0.96 0.008 85);
+  --clay: oklch(0.70 0.10 45);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
+  html, body { background: var(--color-background); color: var(--color-foreground); }
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
     font-family: var(--font-body);
     font-feature-settings: "ss01", "kern";
+    -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4, h5 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 300;
     letter-spacing: -0.01em;
   }
+  ::selection { background: var(--color-gold); color: var(--color-background); }
 }
 
 @utility text-balance { text-wrap: balance; }
@@ -110,9 +89,9 @@
 
 @utility eyebrow {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--color-muted-foreground);
 }
@@ -120,4 +99,10 @@
 @utility hairline {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+@utility serif-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
 }
