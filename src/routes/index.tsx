@@ -383,7 +383,7 @@ function Gallery() {
                     {c.names}
                   </div>
                   <div className="mt-2 eyebrow !text-ivory/70">{c.venue}</div>
-                  <div className="mt-4 flex items-center gap-2 text-ivory translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <div className="mt-4 flex items-center gap-2 text-ivory translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100 transition-all duration-500">
                     <span className="eyebrow !text-gold">Open folder</span>
                     <span className="text-gold">→</span>
                   </div>
