@@ -54,7 +54,7 @@ function Nav() {
             </span>
             <span className="eyebrow !text-ivory">Menu</span>
           </button>
-          <a href="#top" className="font-display tracking-[0.4em] text-xl md:text-2xl">KAARMUKIL</a>
+          <a href="#top" className="font-display tracking-[0.4em] text-xl md:text-2xl">CHENNAIFRAMES</a>
           <a href="#booking" className="eyebrow !text-ivory hidden md:inline">Enquire ↗</a>
         </div>
       </header>
@@ -83,7 +83,7 @@ function Nav() {
             ))}
           </nav>
           <div className="px-10 pb-8 flex justify-between text-xs eyebrow">
-            <span>Fort Kochi · Kerala</span>
+            <span>Chennai · Tamil Nadu</span>
             <span>+91 98470 00000</span>
           </div>
         </motion.div>
@@ -192,8 +192,8 @@ function About() {
           className="md:col-span-7 space-y-10 md:pt-8"
         >
           <p className="text-xl md:text-2xl font-display italic text-ivory/90 leading-snug">
-            Born in Fort Kochi, raised among monsoons and brass lamps. For a decade we've followed
-            Kerala weddings — from the first turmeric paste to the last laugh at dawn.
+            Born in Chennai, shaped by temple mornings and coastal light. For a decade we've followed
+            South Indian weddings — from the first turmeric paste to the last laugh at dawn.
           </p>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
             We are a small studio. Two photographers, one filmmaker, and a colourist who still develops
@@ -501,9 +501,9 @@ function Booking() {
             gets the attention it deserves. Share a few details — we usually reply within two days.
           </p>
           <div className="mt-12 space-y-3 text-sm text-muted-foreground">
-            <p className="serif-italic text-lg text-ivory">hello@kaarmukil.studio</p>
+            <p className="serif-italic text-lg text-ivory">hello@chennaiframes.com</p>
             <p>+91 98470 00000</p>
-            <p>Fort Kochi, Kerala 682001</p>
+            <p>Chennai, Tamil Nadu 600001</p>
           </div>
         </motion.div>
 
@@ -551,9 +551,9 @@ function Footer() {
       <div className="py-20 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-6">
-            <div className="font-display text-6xl md:text-8xl tracking-tight">Kaarmukil<span className="text-gold">.</span></div>
+            <div className="font-display text-6xl md:text-8xl tracking-tight">ChennaiFrames<span className="text-gold">.</span></div>
             <p className="mt-6 text-muted-foreground max-w-sm">
-              Wedding photography & film, made slowly in Kerala.
+              Wedding photography & film, made slowly in Chennai.
             </p>
           </div>
           <div className="md:col-span-3 space-y-3">
@@ -571,7 +571,7 @@ function Footer() {
         </div>
         <div className="hairline mt-16" />
         <div className="mt-6 flex flex-col md:flex-row justify-between gap-4 text-xs eyebrow">
-          <span>© 2026 Kaarmukil Studio · Kochi</span>
+          <span>© 2026 ChennaiFrames Studio · Chennai</span>
           <span>Made slowly, with film and patience</span>
         </div>
       </div>
