@@ -209,7 +209,7 @@ function About() {
   const y = useTransform(scrollYProgress, [0, 1], ["20%", "-20%"]);
 
   return (
-    <section id="about" ref={ref} className="relative py-32 md:py-44 px-6 md:px-12 max-w-7xl mx-auto">
+    <section id="about" ref={ref} className="relative py-20 md:py-44 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="grid md:grid-cols-12 gap-12 md:gap-16 items-start">
         <motion.div
           initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={fadeUp}
@@ -217,20 +217,20 @@ function About() {
         >
           <span className="eyebrow">Studio — 01</span>
           <div className="hairline mt-4 w-24" />
-          <h2 className="mt-8 font-display text-5xl md:text-7xl leading-[0.95]">
+          <h2 className="mt-8 font-display text-4xl md:text-7xl leading-[0.95]">
             Quiet light,<br />
             <em className="serif-italic text-gold">loud</em> love.
           </h2>
-          <motion.div style={{ y }} className="mt-12 aspect-[3/4] overflow-hidden hidden md:block">
+          <div className="mt-8 md:mt-12 aspect-[3/4] overflow-hidden">
             <img src={g3} alt="" className="h-full w-full object-cover" />
-          </motion.div>
+          </div>
         </motion.div>
 
         <motion.div
           initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}
           className="md:col-span-7 space-y-10 md:pt-8"
         >
-          <p className="text-xl md:text-2xl font-display italic text-ivory/90 leading-snug">
+          <p className="text-lg md:text-2xl font-display italic text-ivory/90 leading-snug">
             Born in Chennai, shaped by temple mornings and coastal light. For a decade we've followed
             South Indian weddings — from the first turmeric paste to the last laugh at dawn.
           </p>
@@ -238,14 +238,14 @@ function About() {
             We are a small studio. Two photographers, one filmmaker, and a colourist who still develops
             film by hand. We take on twelve weddings each season so every story gets the patience it deserves.
           </p>
-          <div className="grid grid-cols-3 gap-6 pt-10 border-t border-border">
+          <div className="grid grid-cols-3 gap-4 md:gap-6 pt-10 border-t border-border">
             {[
               ["240+", "Weddings"],
               ["14", "Districts"],
               ["10 yrs", "Of practice"],
             ].map(([n, l]) => (
               <div key={l}>
-                <div className="font-display text-4xl md:text-5xl text-ivory">{n}</div>
+                <div className="font-display text-3xl md:text-5xl text-ivory">{n}</div>
                 <div className="eyebrow mt-3">{l}</div>
               </div>
             ))}
