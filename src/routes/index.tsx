@@ -12,8 +12,8 @@ import g6 from "@/assets/g6.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kaarmukil — Wedding Photography in Kerala" },
-      { name: "description", content: "Cinematic wedding photography & film across Kerala. Quiet light, loud love — stories made slowly." },
+      { title: "ChennaiFrames — Wedding Photography" },
+      { name: "description", content: "Cinematic wedding photography & film across South India. Quiet light, loud love — stories made slowly." },
     ],
   }),
   component: Index,
