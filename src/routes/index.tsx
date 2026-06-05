@@ -481,7 +481,7 @@ function Packages() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative p-10 border flex flex-col group transition-colors ${
+            className={`relative p-6 md:p-10 border flex flex-col group transition-colors ${
               p.featured
                 ? "bg-ivory text-background border-ivory"
                 : "bg-card border-border hover:border-gold"
