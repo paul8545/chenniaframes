@@ -182,9 +182,6 @@ function ColumnHero() {
                 <p className="eyebrow !text-ivory/70">{c.sub}</p>
               </motion.div>
             </div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-14 w-14 rounded-full border border-ivory/50 flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <span className="ml-1 border-l-[10px] border-l-ivory border-y-[6px] border-y-transparent" />
-            </div>
           </motion.div>
         ))}
       </div>
