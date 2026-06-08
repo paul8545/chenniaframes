@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero.jpg";
 import g1 from "@/assets/g1.jpg";
 import g2 from "@/assets/g2.jpg";
@@ -101,6 +101,14 @@ const columns = [
 
 function ColumnHero() {
   const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((prev) => (prev + 1) % columns.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section id="top" className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-background">
       {/* Mobile: single slide with dot nav */}
@@ -173,9 +181,6 @@ function ColumnHero() {
                 </h2>
                 <p className="eyebrow !text-ivory/70">{c.sub}</p>
               </motion.div>
-            </div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-14 w-14 rounded-full border border-ivory/50 flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <span className="ml-1 border-l-[10px] border-l-ivory border-y-[6px] border-y-transparent" />
             </div>
           </motion.div>
         ))}
