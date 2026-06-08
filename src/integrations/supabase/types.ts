@@ -14,16 +14,230 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          email: string
+          event_date: string | null
+          id: string
+          message: string | null
+          name: string
+          status: string
+          venue: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_date?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          status?: string
+          venue?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_date?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          status?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      couples: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          event_date: string | null
+          id: string
+          names: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          event_date?: string | null
+          id?: string
+          names: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          event_date?: string | null
+          id?: string
+          names?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      gallery_images: {
+        Row: {
+          caption: string | null
+          couple_id: string
+          created_at: string
+          id: string
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          couple_id: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          couple_id?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_images_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hero_images: {
+        Row: {
+          created_at: string
+          eyebrow: string | null
+          id: string
+          sort_order: number
+          subtitle: string | null
+          title: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          eyebrow?: string | null
+          id?: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          eyebrow?: string | null
+          id?: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
+      packages: {
+        Row: {
+          created_at: string
+          featured: boolean
+          id: string
+          name: string
+          points: string[]
+          price: string
+          sort_order: number
+          tag: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          featured?: boolean
+          id?: string
+          name: string
+          points?: string[]
+          price: string
+          sort_order?: number
+          tag?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          featured?: boolean
+          id?: string
+          name?: string
+          points?: string[]
+          price?: string
+          sort_order?: number
+          tag?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +364,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
