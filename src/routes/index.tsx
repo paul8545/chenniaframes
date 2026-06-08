@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import hero from "@/assets/hero.jpg";
 import g1 from "@/assets/g1.jpg";
 import g2 from "@/assets/g2.jpg";
 import g3 from "@/assets/g3.jpg";
 import g4 from "@/assets/g4.jpg";
-import g5 from "@/assets/g5.jpg";
-import g6 from "@/assets/g6.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -92,26 +93,32 @@ function Nav() {
   );
 }
 
-const columns = [
-  { src: hero, eyebrow: "Archive your day with the best", title: "Pure Love.", sub: "Premium Kerala Wedding Photography" },
-  { src: g2, eyebrow: "Enjoy the services of cinematic", title: "Authentic Stories.", sub: "Wedding Films in Kerala" },
-  { src: g1, eyebrow: "Register for our creative", title: "Heartwarming.", sub: "Classic Wedding Photography" },
-  { src: g4, eyebrow: "Reach out for the best", title: "True Love.", sub: "Engagement Photography" },
+const fallbackHero = [
+  { url: hero, eyebrow: "Archive your day with the best", title: "Pure Love.", subtitle: "Premium South Indian Wedding Photography" },
+  { url: g2, eyebrow: "Enjoy the services of cinematic", title: "Authentic Stories.", subtitle: "Wedding Films" },
+  { url: g1, eyebrow: "Register for our creative", title: "Heartwarming.", subtitle: "Classic Wedding Photography" },
+  { url: g4, eyebrow: "Reach out for the best", title: "True Love.", subtitle: "Engagement Photography" },
 ];
 
 function ColumnHero() {
+  const { data: db } = useQuery({
+    queryKey: ["hero"],
+    queryFn: async () => {
+      const { data } = await supabase.from("hero_images").select("*").order("sort_order");
+      return data ?? [];
+    },
+  });
+  const columns = db && db.length > 0 ? db : fallbackHero;
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActive((prev) => (prev + 1) % columns.length);
-    }, 5000);
+    if (columns.length < 2) return;
+    const interval = setInterval(() => setActive((prev) => (prev + 1) % columns.length), 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [columns.length]);
 
   return (
     <section id="top" className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-background">
-      {/* Mobile: single slide with dot nav */}
       <div className="md:hidden relative h-full w-full">
         {columns.map((c, i) => (
           <motion.div
@@ -121,22 +128,17 @@ function ColumnHero() {
             animate={{ opacity: active === i ? 1 : 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <img src={c.src} alt={c.title} className="absolute inset-0 h-full w-full object-cover" />
+            <img src={c.url} alt={c.title ?? ""} className="absolute inset-0 h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/40" />
             <div className="relative h-full flex flex-col justify-end p-6 pb-20">
               <div className="max-w-sm">
-                <p className="serif-italic text-ivory/80 text-sm leading-relaxed mb-4">
-                  {c.eyebrow}
-                </p>
-                <h2 className="font-display text-ivory text-4xl leading-[1] mb-2">
-                  {c.title}
-                </h2>
-                <p className="eyebrow !text-ivory/70">{c.sub}</p>
+                <p className="serif-italic text-ivory/80 text-sm leading-relaxed mb-4">{c.eyebrow}</p>
+                <h2 className="font-display text-ivory text-4xl leading-[1] mb-2">{c.title}</h2>
+                <p className="eyebrow !text-ivory/70">{c.subtitle}</p>
               </div>
             </div>
           </motion.div>
         ))}
-        {/* Dots */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
           {columns.map((_, i) => (
             <button
@@ -149,7 +151,6 @@ function ColumnHero() {
         </div>
       </div>
 
-      {/* Desktop: columns */}
       <div className="hidden md:flex h-full w-full">
         {columns.map((c, i) => (
           <motion.div
@@ -160,8 +161,8 @@ function ColumnHero() {
             className="relative h-full overflow-hidden border-r border-ivory/10 last:border-r-0 cursor-pointer group"
           >
             <motion.img
-              src={c.src}
-              alt={c.title}
+              src={c.url}
+              alt={c.title ?? ""}
               className="absolute inset-0 h-full w-full object-cover"
               animate={{ scale: active === i ? 1.05 : 1, opacity: active === i ? 1 : 0.55 }}
               transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
@@ -173,13 +174,9 @@ function ColumnHero() {
                 transition={{ duration: 0.6 }}
                 className="max-w-sm"
               >
-                <p className="serif-italic text-ivory/80 text-sm md:text-base leading-relaxed mb-6">
-                  {c.eyebrow}
-                </p>
-                <h2 className="font-display text-ivory text-4xl md:text-6xl leading-[1] mb-3">
-                  {c.title}
-                </h2>
-                <p className="eyebrow !text-ivory/70">{c.sub}</p>
+                <p className="serif-italic text-ivory/80 text-sm md:text-base leading-relaxed mb-6">{c.eyebrow}</p>
+                <h2 className="font-display text-ivory text-4xl md:text-6xl leading-[1] mb-3">{c.title}</h2>
+                <p className="eyebrow !text-ivory/70">{c.subtitle}</p>
               </motion.div>
             </div>
           </motion.div>
@@ -190,7 +187,7 @@ function ColumnHero() {
 }
 
 function Marquee() {
-  const words = ["Kerala", "·", "Backwaters", "·", "Temples", "·", "Beaches", "·", "Heirloom Films", "·", "Since 2014", "·"];
+  const words = ["Chennai", "·", "Temples", "·", "Beaches", "·", "Backwaters", "·", "Heirloom Films", "·", "Since 2014", "·"];
   return (
     <div className="relative overflow-hidden border-y border-border py-8 bg-background">
       <motion.div
@@ -208,10 +205,31 @@ function Marquee() {
   );
 }
 
+function useContent() {
+  const { data } = useQuery({
+    queryKey: ["content"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_content").select("*");
+      const map = new Map<string, string>();
+      (data ?? []).forEach((r) => {
+        const text = (r.value as { text?: string })?.text;
+        if (text) map.set(r.key, text);
+      });
+      return map;
+    },
+  });
+  return data ?? new Map<string, string>();
+}
+
 function About() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["20%", "-20%"]);
+  const content = useContent();
+
+  const heading = content.get("about_heading") ?? "Quiet light, loud love.";
+  const body1 = content.get("about_body_1") ?? "Born in Chennai, shaped by temple mornings and coastal light. For a decade we've followed South Indian weddings — from the first turmeric paste to the last laugh at dawn.";
+  const body2 = content.get("about_body_2") ?? "We are a small studio. Two photographers, one filmmaker, and a colourist who still develops film by hand. We take on twelve weddings each season so every story gets the patience it deserves.";
 
   return (
     <section id="about" ref={ref} className="relative py-20 md:py-44 px-6 md:px-12 max-w-7xl mx-auto">
@@ -223,26 +241,24 @@ function About() {
           <span className="eyebrow">Studio — 01</span>
           <div className="hairline mt-4 w-24" />
           <h2 className="mt-8 font-display text-4xl md:text-7xl leading-[0.95]">
-            Quiet light,<br />
-            <em className="serif-italic text-gold">loud</em> love.
+            {heading.split(",").map((part, i, arr) => (
+              <span key={i}>
+                {i === arr.length - 1 ? <em className="serif-italic text-gold">{part}</em> : part}
+                {i < arr.length - 1 && <>,<br /></>}
+              </span>
+            ))}
           </h2>
-          <div className="mt-8 md:mt-12 aspect-[3/4] overflow-hidden">
+          <motion.div style={{ y }} className="mt-8 md:mt-12 aspect-[3/4] overflow-hidden">
             <img src={g3} alt="" className="h-full w-full object-cover" />
-          </div>
+          </motion.div>
         </motion.div>
 
         <motion.div
           initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}
           className="md:col-span-7 space-y-10 md:pt-8"
         >
-          <p className="text-lg md:text-2xl font-display italic text-ivory/90 leading-snug">
-            Born in Chennai, shaped by temple mornings and coastal light. For a decade we've followed
-            South Indian weddings — from the first turmeric paste to the last laugh at dawn.
-          </p>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
-            We are a small studio. Two photographers, one filmmaker, and a colourist who still develops
-            film by hand. We take on twelve weddings each season so every story gets the patience it deserves.
-          </p>
+          <p className="text-lg md:text-2xl font-display italic text-ivory/90 leading-snug">{body1}</p>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">{body2}</p>
           <div className="grid grid-cols-3 gap-4 md:gap-6 pt-10 border-t border-border">
             {[
               ["240+", "Weddings"],
@@ -261,72 +277,38 @@ function About() {
   );
 }
 
-type Couple = {
+type CoupleWithImages = {
   id: string;
   names: string;
-  venue: string;
-  date: string;
-  cover: string;
-  images: { src: string; caption: string }[];
+  venue: string | null;
+  event_date: string | null;
+  cover_url: string | null;
+  images: { id: string; url: string; caption: string | null }[];
 };
-
-const couples: Couple[] = [
-  {
-    id: "anjali-rahul",
-    names: "Anjali & Rahul",
-    venue: "Fort Kochi",
-    date: "Feb 2026",
-    cover: g1,
-    images: [
-      { src: g1, caption: "The garland exchange" },
-      { src: g3, caption: "Jasmine in her hair" },
-      { src: g6, caption: "Reception, first dance" },
-      { src: g4, caption: "Around the fire" },
-    ],
-  },
-  {
-    id: "meera-arjun",
-    names: "Meera & Arjun",
-    venue: "Alleppey Backwaters",
-    date: "Nov 2025",
-    cover: g2,
-    images: [
-      { src: g2, caption: "Houseboat morning" },
-      { src: g5, caption: "Varkala cliffs" },
-      { src: g3, caption: "Quiet hands" },
-      { src: g1, caption: "The blessing" },
-    ],
-  },
-  {
-    id: "divya-karthik",
-    names: "Divya & Karthik",
-    venue: "Guruvayur Temple",
-    date: "May 2025",
-    cover: g4,
-    images: [
-      { src: g4, caption: "Sacred fire" },
-      { src: g1, caption: "Tying the thaali" },
-      { src: g6, caption: "Family portrait" },
-      { src: g3, caption: "After the rituals" },
-    ],
-  },
-  {
-    id: "lakshmi-vinay",
-    names: "Lakshmi & Vinay",
-    venue: "Varkala Beach",
-    date: "Jan 2025",
-    cover: g5,
-    images: [
-      { src: g5, caption: "Vows at sunset" },
-      { src: g2, caption: "Walking the shore" },
-      { src: g6, caption: "Reception lights" },
-      { src: g4, caption: "Last laugh of the night" },
-    ],
-  },
-];
 
 function Gallery() {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const { data: couples = [] } = useQuery<CoupleWithImages[]>({
+    queryKey: ["gallery"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("couples")
+        .select("id, names, venue, event_date, cover_url, gallery_images(id, url, caption, sort_order)")
+        .order("sort_order");
+      return (data ?? []).map((c) => ({
+        id: c.id,
+        names: c.names,
+        venue: c.venue,
+        event_date: c.event_date,
+        cover_url: c.cover_url,
+        images: (c.gallery_images ?? [])
+          .slice()
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+          .map((img) => ({ id: img.id, url: img.url, caption: img.caption })),
+      }));
+    },
+  });
+
   const active = couples.find((c) => c.id === activeId) ?? null;
 
   return (
@@ -345,7 +327,7 @@ function Gallery() {
             </h2>
             <p className="mt-4 text-muted-foreground max-w-lg">
               {active
-                ? `${active.venue} · ${active.date}`
+                ? `${active.venue ?? ""}${active.venue && active.event_date ? " · " : ""}${active.event_date ?? ""}`
                 : "Each folder is a wedding. Open one to step inside the day."}
             </p>
           </div>
@@ -371,12 +353,14 @@ function Gallery() {
                 transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative aspect-[3/4] overflow-hidden bg-card text-left"
               >
-                <img
-                  src={c.cover}
-                  alt={c.names}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition-all duration-[1400ms] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                />
+                {c.cover_url && (
+                  <img
+                    src={c.cover_url}
+                    alt={c.names}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-all duration-[1400ms] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                   <span className="eyebrow !text-ivory/80 backdrop-blur-sm bg-background/30 px-2 py-1">
@@ -384,10 +368,8 @@ function Gallery() {
                   </span>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <div className="font-display italic text-ivory text-2xl md:text-3xl leading-tight">
-                    {c.names}
-                  </div>
-                  <div className="mt-2 eyebrow !text-ivory/70">{c.venue}</div>
+                  <div className="font-display italic text-ivory text-2xl md:text-3xl leading-tight">{c.names}</div>
+                  {c.venue && <div className="mt-2 eyebrow !text-ivory/70">{c.venue}</div>}
                   <div className="mt-4 flex items-center gap-2 text-ivory translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100 transition-all duration-500">
                     <span className="eyebrow !text-gold">Open folder</span>
                     <span className="text-gold">→</span>
@@ -395,6 +377,11 @@ function Gallery() {
                 </div>
               </motion.button>
             ))}
+            {couples.length === 0 && (
+              <div className="col-span-full text-center py-20 text-muted-foreground">
+                The gallery is being curated. Check back soon.
+              </div>
+            )}
           </div>
         )}
 
@@ -416,22 +403,26 @@ function Gallery() {
               ];
               return (
                 <motion.figure
-                  key={i}
+                  key={img.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                   className={`relative overflow-hidden group ${spans[i % spans.length]} h-[300px] md:h-auto bg-card`}
                 >
                   <img
-                    src={img.src}
-                    alt={img.caption}
+                    src={img.url}
+                    alt={img.caption ?? ""}
                     loading="lazy"
                     className="h-full w-full object-cover transition-all duration-[1400ms] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <figcaption className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <span className="font-display italic text-ivory text-xl">{img.caption}</span>
-                  </figcaption>
+                  {img.caption && (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <figcaption className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <span className="font-display italic text-ivory text-xl">{img.caption}</span>
+                      </figcaption>
+                    </>
+                  )}
                 </motion.figure>
               );
             })}
@@ -442,29 +433,25 @@ function Gallery() {
   );
 }
 
-const packages = [
-  {
-    name: "Half Day",
-    price: "₹ 45,000",
-    tag: "Intimate ceremonies",
-    points: ["6 hours coverage", "One lead photographer", "150+ edited images", "Online gallery, 1 year"],
-  },
-  {
-    name: "Full Wedding",
-    price: "₹ 1,20,000",
-    tag: "Most loved",
-    featured: true,
-    points: ["Two days, two photographers", "500+ edited images", "Cinematic 5-min film", "Heirloom photo book"],
-  },
-  {
-    name: "The Heirloom",
-    price: "₹ 2,40,000",
-    tag: "Multi-day celebrations",
-    points: ["Up to 4 days coverage", "Three artists, photo + film", "1000+ images, full film", "Engraved walnut album"],
-  },
+const fallbackPackages = [
+  { id: "1", name: "Half Day", price: "₹ 45,000", tag: "Intimate ceremonies", featured: false,
+    points: ["6 hours coverage", "One lead photographer", "150+ edited images", "Online gallery, 1 year"] },
+  { id: "2", name: "Full Wedding", price: "₹ 1,20,000", tag: "Most loved", featured: true,
+    points: ["Two days, two photographers", "500+ edited images", "Cinematic 5-min film", "Heirloom photo book"] },
+  { id: "3", name: "The Heirloom", price: "₹ 2,40,000", tag: "Multi-day celebrations", featured: false,
+    points: ["Up to 4 days coverage", "Three artists, photo + film", "1000+ images, full film", "Engraved walnut album"] },
 ];
 
 function Packages() {
+  const { data: db } = useQuery({
+    queryKey: ["packages"],
+    queryFn: async () => {
+      const { data } = await supabase.from("packages").select("*").order("sort_order");
+      return data ?? [];
+    },
+  });
+  const packages = db && db.length > 0 ? db : fallbackPackages;
+
   return (
     <section id="packages" className="py-32 md:py-44 px-6 md:px-12 max-w-7xl mx-auto border-t border-border">
       <div className="text-center max-w-3xl mx-auto mb-20">
@@ -481,15 +468,13 @@ function Packages() {
       <div className="grid md:grid-cols-3 gap-3">
         {packages.map((p, i) => (
           <motion.div
-            key={p.name}
+            key={p.id}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
             className={`relative p-6 md:p-10 border flex flex-col group transition-colors ${
-              p.featured
-                ? "bg-ivory text-background border-ivory"
-                : "bg-card border-border hover:border-gold"
+              p.featured ? "bg-ivory text-background border-ivory" : "bg-card border-border hover:border-gold"
             }`}
           >
             {p.featured && (
@@ -499,7 +484,7 @@ function Packages() {
             <h3 className="font-display text-4xl mt-5">{p.name}</h3>
             <div className="font-display text-5xl mt-6 mb-10">{p.price}</div>
             <ul className={`space-y-3 mb-10 text-sm ${p.featured ? "text-background/75" : "text-muted-foreground"}`}>
-              {p.points.map((pt) => (
+              {(p.points ?? []).map((pt) => (
                 <li key={pt} className="flex gap-3">
                   <span className={`mt-2 h-px w-4 shrink-0 ${p.featured ? "bg-background/50" : "bg-gold"}`} />
                   {pt}
@@ -525,7 +510,29 @@ function Packages() {
 }
 
 function Booking() {
+  const content = useContent();
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", event_date: "", venue: "", message: "" });
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from("bookings").insert({
+        name: form.name.trim().slice(0, 100),
+        email: form.email.trim().slice(0, 255),
+        event_date: form.event_date || null,
+        venue: form.venue.trim().slice(0, 200) || null,
+        message: form.message.trim().slice(0, 2000) || null,
+      });
+      if (error) throw error;
+      setSent(true);
+      toast.success("Enquiry sent — we'll be in touch soon");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Could not send. Try again?");
+    } finally { setSubmitting(false); }
+  }
 
   return (
     <section id="booking" className="relative py-32 md:py-44 overflow-hidden border-t border-border">
@@ -545,27 +552,29 @@ function Booking() {
             gets the attention it deserves. Share a few details — we usually reply within two days.
           </p>
           <div className="mt-12 space-y-3 text-sm text-muted-foreground">
-            <p className="serif-italic text-lg text-ivory">hello@chennaiframes.com</p>
-            <p>+91 98470 00000</p>
-            <p>Chennai, Tamil Nadu 600001</p>
+            <p className="serif-italic text-lg text-ivory">{content.get("contact_email") ?? "hello@chennaiframes.com"}</p>
+            <p>{content.get("contact_phone") ?? "+91 98470 00000"}</p>
+            <p>{content.get("contact_address") ?? "Chennai, Tamil Nadu 600001"}</p>
           </div>
         </motion.div>
 
         <motion.form
           initial={fadeUp.hidden} whileInView={fadeUp.show} viewport={{ once: true }}
-          onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+          onSubmit={onSubmit}
           className="space-y-5"
         >
-          {[
+          {([
             { name: "name", label: "Your name", type: "text" },
             { name: "email", label: "Email", type: "email" },
-            { name: "date", label: "Wedding date", type: "date" },
+            { name: "event_date", label: "Wedding date", type: "date" },
             { name: "venue", label: "Venue or town", type: "text" },
-          ].map((f) => (
+          ] as const).map((f) => (
             <div key={f.name}>
               <label className="eyebrow">{f.label}</label>
               <input
-                required type={f.type} name={f.name}
+                required={f.name === "name" || f.name === "email"}
+                type={f.type} name={f.name}
+                value={form[f.name]} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
                 className="mt-2 w-full bg-transparent border-b border-border py-3 text-ivory focus:border-gold outline-none transition-colors"
               />
             </div>
@@ -573,15 +582,15 @@ function Booking() {
           <div>
             <label className="eyebrow">A few words</label>
             <textarea
-              rows={3}
+              rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
               className="mt-2 w-full bg-transparent border-b border-border py-3 text-ivory focus:border-gold outline-none transition-colors resize-none"
             />
           </div>
           <button
-            type="submit"
-            className="mt-6 w-full md:w-auto px-10 py-4 bg-gold text-background eyebrow hover:bg-ivory transition-colors"
+            type="submit" disabled={submitting || sent}
+            className="mt-6 w-full md:w-auto px-10 py-4 bg-gold text-background eyebrow hover:bg-ivory transition-colors disabled:opacity-60"
           >
-            {sent ? "Thank you — we'll be in touch" : "Send enquiry →"}
+            {sent ? "Thank you — we'll be in touch" : submitting ? "Sending…" : "Send enquiry →"}
           </button>
         </motion.form>
       </div>
@@ -602,7 +611,7 @@ function Footer() {
           </div>
           <div className="md:col-span-3 space-y-3">
             <div className="eyebrow mb-4">Studio</div>
-            {["About", "Gallery", "Packages", "Journal"].map((l) => (
+            {["About", "Gallery", "Packages", "Booking"].map((l) => (
               <a key={l} href={`#${l.toLowerCase()}`} className="block text-ivory/80 hover:text-gold transition-colors">{l}</a>
             ))}
           </div>
