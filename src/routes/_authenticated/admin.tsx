@@ -118,7 +118,7 @@ function HeroAdmin() {
     } finally { setUploading(false); }
   }
 
-  async function update(id: string, patch: Record<string, unknown>) {
+  async function update(id: string, patch: any) {
     const { error } = await supabase.from("hero_images").update(patch).eq("id", id);
     if (error) toast.error(error.message);
     else qc.invalidateQueries({ queryKey: ["admin-hero"] });
@@ -175,7 +175,7 @@ function CouplesAdmin() {
     else { setNewName(""); toast.success("Couple added"); qc.invalidateQueries({ queryKey: ["admin-couples"] }); }
   }
 
-  async function update(id: string, patch: Record<string, unknown>) {
+  async function update(id: string, patch: any) {
     const { error } = await supabase.from("couples").update(patch).eq("id", id);
     if (error) toast.error(error.message);
     else qc.invalidateQueries({ queryKey: ["admin-couples"] });
@@ -251,7 +251,7 @@ function CoupleImagesModal({ coupleId, onClose, onCoverSet }: { coupleId: string
     finally { setUploading(false); }
   }
 
-  async function updateImg(id: string, patch: Record<string, unknown>) {
+  async function updateImg(id: string, patch: any) {
     const { error } = await supabase.from("gallery_images").update(patch).eq("id", id);
     if (error) toast.error(error.message);
     else qc.invalidateQueries({ queryKey: ["admin-images", coupleId] });
@@ -309,7 +309,7 @@ function PackagesAdmin() {
     if (error) toast.error(error.message);
     else qc.invalidateQueries({ queryKey: ["admin-packages"] });
   }
-  async function update(id: string, patch: Record<string, unknown>) {
+  async function update(id: string, patch: any) {
     const { error } = await supabase.from("packages").update(patch).eq("id", id);
     if (error) toast.error(error.message);
     else qc.invalidateQueries({ queryKey: ["admin-packages"] });
