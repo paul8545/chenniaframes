@@ -101,6 +101,14 @@ const columns = [
 
 function ColumnHero() {
   const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((prev) => (prev + 1) % columns.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section id="top" className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-background">
       {/* Mobile: single slide with dot nav */}
