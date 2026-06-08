@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero.jpg";
 import g1 from "@/assets/g1.jpg";
 import g2 from "@/assets/g2.jpg";
