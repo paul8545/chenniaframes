@@ -66,19 +66,39 @@ function ResetPasswordPage() {
           <form onSubmit={onSubmit} className="mt-10 space-y-6">
             <div>
               <label className="eyebrow">New password</label>
-              <input
-                type="password" required minLength={6} value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 w-full bg-transparent border-b border-border py-3 text-ivory focus:border-gold outline-none"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"} required minLength={6} value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-2 w-full bg-transparent border-b border-border py-3 pr-10 text-ivory focus:border-gold outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-0 bottom-3 text-muted-foreground hover:text-gold"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="eyebrow">Confirm password</label>
-              <input
-                type="password" required minLength={6} value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                className="mt-2 w-full bg-transparent border-b border-border py-3 text-ivory focus:border-gold outline-none"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirm ? "text" : "password"} required minLength={6} value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  className="mt-2 w-full bg-transparent border-b border-border py-3 pr-10 text-ivory focus:border-gold outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((s) => !s)}
+                  className="absolute right-0 bottom-3 text-muted-foreground hover:text-gold"
+                  aria-label={showConfirm ? "Hide password" : "Show password"}
+                >
+                  {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
             <button
               type="submit" disabled={loading}
