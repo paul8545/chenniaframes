@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Admin Sign in — ChennaiFrames" }] }),
@@ -15,6 +16,7 @@ function AuthPage() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -83,10 +85,20 @@ function AuthPage() {
           {mode !== "forgot" && (
             <div>
               <label className="eyebrow">Password</label>
-              <input
-                type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 w-full bg-transparent border-b border-border py-3 text-ivory focus:border-gold outline-none"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="mt-2 w-full bg-transparent border-b border-border py-3 pr-10 text-ivory focus:border-gold outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-0 bottom-3 text-muted-foreground hover:text-gold"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
           )}
           <button
