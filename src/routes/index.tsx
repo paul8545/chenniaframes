@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,35 +60,37 @@ function Nav() {
         </div>
       </header>
 
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] bg-background/98 backdrop-blur-xl flex flex-col"
-        >
-          <div className="px-6 md:px-10 h-20 flex items-center justify-between">
-            <span className="eyebrow">Index</span>
-            <button onClick={() => setOpen(false)} className="eyebrow">Close ✕</button>
-          </div>
-          <nav className="flex-1 flex flex-col items-center justify-center gap-4 md:gap-6 px-6">
-            {links.map((l, i) => (
-              <motion.a
-                key={l}
-                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08 * i, duration: 0.6 }}
-                href={`#${l.toLowerCase()}`}
-                onClick={() => setOpen(false)}
-                className="font-display text-5xl sm:text-6xl md:text-8xl hover:text-gold transition-colors italic"
-              >
-                {l}.
-              </motion.a>
-            ))}
-          </nav>
-          <div className="px-6 md:px-10 pb-8 flex justify-between text-xs eyebrow">
-            <span>Chennai · Tamil Nadu</span>
-            <span>+91 98470 00000</span>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-background/98 backdrop-blur-xl flex flex-col"
+          >
+            <div className="px-6 md:px-10 h-20 flex items-center justify-between">
+              <span className="eyebrow">Index</span>
+              <button onClick={() => setOpen(false)} className="eyebrow">Close ✕</button>
+            </div>
+            <nav className="flex-1 flex flex-col items-center justify-center gap-4 md:gap-6 px-6">
+              {links.map((l, i) => (
+                <motion.a
+                  key={l}
+                  initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.08 * i, duration: 0.6 }}
+                  href={`#${l.toLowerCase()}`}
+                  onClick={() => setOpen(false)}
+                  className="font-display text-5xl sm:text-6xl md:text-8xl hover:text-gold transition-colors italic"
+                >
+                  {l}.
+                </motion.a>
+              ))}
+            </nav>
+            <div className="px-6 md:px-10 pb-8 flex justify-between text-xs eyebrow">
+              <span>Chennai · Tamil Nadu</span>
+              <span>+91 98470 00000</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
@@ -110,12 +112,13 @@ function ColumnHero() {
   });
   const columns = db && db.length > 0 ? db : fallbackHero;
   const [active, setActive] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (columns.length < 2) return;
+    if (columns.length < 2 || isHovered) return;
     const interval = setInterval(() => setActive((prev) => (prev + 1) % columns.length), 5000);
     return () => clearInterval(interval);
-  }, [columns.length]);
+  }, [columns.length, isHovered]);
 
   return (
     <section id="top" className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-background">
@@ -151,7 +154,11 @@ function ColumnHero() {
         </div>
       </div>
 
-      <div className="hidden md:flex h-full w-full">
+      <div 
+        className="hidden md:flex h-full w-full"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         {columns.map((c, i) => (
           <motion.div
             key={i}
@@ -288,6 +295,7 @@ type CoupleWithImages = {
 
 function Gallery() {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const { data: couples = [] } = useQuery<CoupleWithImages[]>({
     queryKey: ["gallery"],
     queryFn: async () => {
@@ -310,6 +318,24 @@ function Gallery() {
   });
 
   const active = couples.find((c) => c.id === activeId) ?? null;
+
+  useEffect(() => {
+    setLightboxIndex(null);
+  }, [activeId]);
+
+  useEffect(() => {
+    if (lightboxIndex === null || !active) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIndex(null);
+      else if (e.key === "ArrowRight") {
+        setLightboxIndex((prev) => (prev !== null && prev < active.images.length - 1 ? prev + 1 : 0));
+      } else if (e.key === "ArrowLeft") {
+        setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : active.images.length - 1));
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex, active]);
 
   return (
     <section id="gallery" className="py-32 md:py-44 border-t border-border">
@@ -404,10 +430,11 @@ function Gallery() {
               return (
                 <motion.figure
                   key={img.id}
+                  onClick={() => setLightboxIndex(i)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  className={`relative overflow-hidden group ${spans[i % spans.length]} h-[300px] md:h-auto bg-card`}
+                  className={`relative overflow-hidden group ${spans[i % spans.length]} h-[300px] md:h-auto bg-card cursor-zoom-in`}
                 >
                   <img
                     src={img.url}
@@ -428,6 +455,72 @@ function Gallery() {
             })}
           </motion.div>
         )}
+
+        <AnimatePresence>
+          {lightboxIndex !== null && active && active.images[lightboxIndex] && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] bg-background/95 backdrop-blur-md flex flex-col justify-between p-6"
+            >
+              <div className="flex justify-between items-center text-ivory z-10">
+                <span className="eyebrow">
+                  {active.names} · {lightboxIndex + 1} / {active.images.length}
+                </span>
+                <button
+                  onClick={() => setLightboxIndex(null)}
+                  className="eyebrow p-2 hover:text-gold transition-colors"
+                >
+                  Close ✕
+                </button>
+              </div>
+
+              <div className="relative flex-1 flex items-center justify-center min-h-0">
+                <button
+                  onClick={() =>
+                    setLightboxIndex((prev) =>
+                      prev !== null && prev > 0 ? prev - 1 : active.images.length - 1
+                    )
+                  }
+                  className="absolute left-4 md:left-8 text-ivory/60 hover:text-gold text-3xl font-light p-4 z-10 transition-colors"
+                  aria-label="Previous image"
+                >
+                  &larr;
+                </button>
+
+                <motion.img
+                  key={lightboxIndex}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  src={active.images[lightboxIndex].url}
+                  alt={active.images[lightboxIndex].caption ?? ""}
+                  className="max-h-[80vh] max-w-[85vw] object-contain select-none shadow-2xl"
+                />
+
+                <button
+                  onClick={() =>
+                    setLightboxIndex((prev) =>
+                      prev !== null && prev < active.images.length - 1 ? prev + 1 : 0
+                    )
+                  }
+                  className="absolute right-4 md:right-8 text-ivory/60 hover:text-gold text-3xl font-light p-4 z-10 transition-colors"
+                  aria-label="Next image"
+                >
+                  &rarr;
+                </button>
+              </div>
+
+              {active.images[lightboxIndex].caption && (
+                <div className="text-center pb-4 text-ivory/90 z-10 font-display italic text-lg md:text-xl">
+                  {active.images[lightboxIndex].caption}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
@@ -495,10 +588,9 @@ function Packages() {
               href="#booking"
               className={`mt-auto text-center eyebrow py-3.5 border transition-colors ${
                 p.featured
-                  ? "border-background bg-background !text-ivory hover:bg-transparent"
-                  : "border-ivory/30 hover:bg-ivory hover:!text-background"
+                  ? "border-background bg-background text-ivory hover:bg-transparent hover:text-background"
+                  : "border-ivory/30 text-ivory hover:bg-ivory hover:text-background"
               }`}
-              style={p.featured ? { color: "var(--color-ivory)" } : undefined}
             >
               Enquire →
             </a>
